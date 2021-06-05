@@ -14,21 +14,30 @@ class DinoBus extends StatefulWidget {
 class _DinoBusState extends State<DinoBus> {
   int _n = 0;
   bool _showBus = false;
+  bool _gameover = false;
+
+  void _bot() {}
+
+  void _checkGame(bool fromBus) {
+    if (_n % 5 == 0 && !fromBus && !_gameover) _gameover = true;
+    if (_n % 5 != 0 && fromBus && !_gameover) _gameover = true;
+    setState(() {});
+  }
 
   void _add() {
-    {
+    if (!_gameover) {
       _showBus = false;
       _n++;
-      setState(() {});
     }
-    ;
+    _checkGame(false);
   }
 
   void _bus() {
-    _n++;
-    setState(() {
+    if (!_gameover) {
       _showBus = true;
-    });
+      _n++;
+    }
+    _checkGame(true);
   }
 
   @override
@@ -116,12 +125,13 @@ class _DinoBusState extends State<DinoBus> {
             left: 0,
             right: 0,
             child: _showBus
-                ? Container(height: MediaQuery.of(context).size.height * 0.5,
-                width:  MediaQuery.of(context).size.width * 0.2 ,
+                ? Container(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    // width: MediaQuery.of(context).size.width * 0.2,
                     decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
+                        shape: BoxShape.rectangle,
                         image: DecorationImage(
-                          fit:BoxFit.cover,
+                            fit: BoxFit.fitHeight,
                             image: AssetImage("image/bus1.png"))))
                 : (Text('$_n',
                     style: TextStyle(
@@ -129,7 +139,48 @@ class _DinoBusState extends State<DinoBus> {
                         color: Colors.black,
                         fontWeight: FontWeight.w300),
                     textAlign: TextAlign.center)),
-          )
+          ),
+          _gameover
+              ? Container(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "GAME OVER",
+                          style: TextStyle(
+                              fontSize: 56,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _gameover = false;
+                                _n = 0;
+                                _showBus = false;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.restart_alt_rounded,
+                              size: 24,
+                            ))
+                      ],
+                    ),
+                  ),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          stops: [0.10, 1],
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color.fromRGBO(17, 16, 16, 1),
+                            Color.fromRGBO(249, 224, 5, 1)
+                          ])),
+                )
+              : Container(),
         ],
       ),
     );
