@@ -2,8 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-
-
 void main() {
   runApp(MaterialApp(home: DinoBus()));
 }
@@ -15,12 +13,22 @@ class DinoBus extends StatefulWidget {
 
 class _DinoBusState extends State<DinoBus> {
   int _n = 0;
+  bool _showBus = false;
 
   void _add() {
-     {
+    {
+      _showBus = false;
       _n++;
-      print('$_n');
-    };
+      setState(() {});
+    }
+    ;
+  }
+
+  void _bus() {
+    _n++;
+    setState(() {
+      _showBus = true;
+    });
   }
 
   @override
@@ -67,7 +75,9 @@ class _DinoBusState extends State<DinoBus> {
                 style: TextButton.styleFrom(
                   primary: Color.fromRGBO(249, 224, 5, 1),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  _bus();
+                },
                 child: Align(
                     alignment: Alignment.center,
                     child: Center(child: Image.asset("image/bus21.png"))),
@@ -103,15 +113,22 @@ class _DinoBusState extends State<DinoBus> {
                   ))),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.20,
-            bottom: 0,
             left: 0,
             right: 0,
-            child: Text('$_n',
-                style: TextStyle(
-                    fontSize: 200,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w300),
-                textAlign: TextAlign.center),
+            child: _showBus
+                ? Container(height: MediaQuery.of(context).size.height * 0.5,
+                width:  MediaQuery.of(context).size.width * 0.2 ,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                          fit:BoxFit.cover,
+                            image: AssetImage("image/bus1.png"))))
+                : (Text('$_n',
+                    style: TextStyle(
+                        fontSize: 200,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w300),
+                    textAlign: TextAlign.center)),
           )
         ],
       ),
