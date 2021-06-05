@@ -13,7 +13,7 @@ class DinoBus extends StatefulWidget {
 
 class _DinoBusState extends State<DinoBus> {
   int _n = 0;
-  int _i=1;
+  
   
   bool _showBus = false;
   bool _gameOver=false;
@@ -22,7 +22,7 @@ class _DinoBusState extends State<DinoBus> {
     
       _showBus = false;
       _n++;
-      if(_n==5*_i)
+      if(_n%5==0)
       {_gameOver=true;}
       setState(() {});
       
@@ -32,11 +32,12 @@ class _DinoBusState extends State<DinoBus> {
 
   void _bus() {
     _n++;
+    
     setState(() {
       _showBus = true;
     });
-    _i++;
-    if(_n!=5)
+    
+    if(_n%5!=0)
       {_gameOver=true;}
 
   }
@@ -133,7 +134,7 @@ class _DinoBusState extends State<DinoBus> {
                       shape: BoxShape.rectangle,
                         image: DecorationImage(
                           fit:BoxFit.fitHeight,
-                            image: AssetImage("image/bus1.png"))))
+                            image: AssetImage("image/bus10.png"))))
                 : (Text('$_n',
                     style: TextStyle(
                         fontSize: 200,
