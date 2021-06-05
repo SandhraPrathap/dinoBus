@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -12,19 +14,51 @@ class DinoBus extends StatefulWidget {
 }
 
 class _DinoBusState extends State<DinoBus> {
+  var _r = Random();
   int _n = 0;
   bool _showBus = false;
   bool _gameover = false;
+  bool _botTurn = false;
+  Timer? _t;
+  @override
+  void initState() {
+    _n = _r.nextInt(3);
+    super.initState();
+  }
 
-  void _bot() {}
+  void _endGame() {
+    setState(() {
+      _gameover = true;
+    });
+  }
+
+  void _bot() {
+    // Start delayed bot stuff
+    Timer(Duration(milliseconds: 500), () {
+      if ((_n + 1) % 5 == 0) {
+        _bus();
+      } else {
+        _add();
+      }
+      // Start user time bomb after bot moves
+      _t = Timer(Duration(seconds: 2), () {
+        _endGame();
+      });
+      // t.cancel();
+    });
+  }
 
   void _checkGame(bool fromBus) {
-    if (_n % 5 == 0 && !fromBus && !_gameover) _gameover = true;
-    if (_n % 5 != 0 && fromBus && !_gameover) _gameover = true;
+    if (_n % 5 == 0 && !fromBus && !_gameover) _endGame();
+    if (_n % 5 != 0 && fromBus && !_gameover) _endGame();
     setState(() {});
+    _botTurn = !_botTurn;
+    if (_botTurn) _bot();
   }
 
   void _add() {
+    // cancel  time-bomb when user responds
+    if (_t != null) _t!.cancel();
     if (!_gameover) {
       _showBus = false;
       _n++;
@@ -33,6 +67,8 @@ class _DinoBusState extends State<DinoBus> {
   }
 
   void _bus() {
+    // cancel time-bomb when user responds
+    if (_t != null) _t!.cancel();
     if (!_gameover) {
       _showBus = true;
       _n++;
@@ -85,7 +121,11 @@ class _DinoBusState extends State<DinoBus> {
                   primary: Color.fromRGBO(249, 224, 5, 1),
                 ),
                 onPressed: () {
-                  _bus();
+                  if (!_botTurn)
+                    _bus();
+                  else {
+                    _endGame();
+                  }
                 },
                 child: Align(
                     alignment: Alignment.center,
@@ -108,7 +148,10 @@ class _DinoBusState extends State<DinoBus> {
                       primary: Color.fromRGBO(249, 224, 5, 1),
                     ),
                     onPressed: () {
-                      _add();
+                      if (!_botTurn)
+                        _add();
+                      else
+                        _endGame();
                     },
                     child: Align(
                       alignment: Alignment.center,
@@ -124,21 +167,26 @@ class _DinoBusState extends State<DinoBus> {
             top: MediaQuery.of(context).size.height * 0.20,
             left: 0,
             right: 0,
-            child: _showBus
-                ? Container(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    // width: MediaQuery.of(context).size.width * 0.2,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        image: DecorationImage(
-                            fit: BoxFit.fitHeight,
-                            image: AssetImage("image/bus1.png"))))
-                : (Text('$_n',
-                    style: TextStyle(
-                        fontSize: 200,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w300),
-                    textAlign: TextAlign.center)),
+            child: AnimatedSwitcher(
+              // transitionBuilder: (child, animation) {},
+              duration: Duration(milliseconds: 100),
+              child: _showBus
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      // width: MediaQuery.of(context).size.width * 0.2,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              fit: BoxFit.fitHeight,
+                              image: AssetImage("image/bus1.png"))))
+                  : (Text('$_n',
+                      key: Key("$_n"),
+                      style: TextStyle(
+                          fontSize: 200,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w300),
+                      textAlign: TextAlign.center)),
+            ),
           ),
           _gameover
               ? Container(
@@ -157,7 +205,8 @@ class _DinoBusState extends State<DinoBus> {
                             onPressed: () {
                               setState(() {
                                 _gameover = false;
-                                _n = 0;
+
+                                _n = _r.nextInt(9);
                                 _showBus = false;
                               });
                             },
