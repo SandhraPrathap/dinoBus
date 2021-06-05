@@ -13,15 +13,21 @@ class DinoBus extends StatefulWidget {
 
 class _DinoBusState extends State<DinoBus> {
   int _n = 0;
+  int _i=1;
+  
   bool _showBus = false;
+  bool _gameOver=false;
 
   void _add() {
-    {
+    
       _showBus = false;
       _n++;
+      if(_n==5*_i)
+      {_gameOver=true;}
       setState(() {});
-    }
-    ;
+      
+      
+    
   }
 
   void _bus() {
@@ -29,6 +35,10 @@ class _DinoBusState extends State<DinoBus> {
     setState(() {
       _showBus = true;
     });
+    _i++;
+    if(_n!=5)
+      {_gameOver=true;}
+
   }
 
   @override
@@ -47,7 +57,8 @@ class _DinoBusState extends State<DinoBus> {
             ],
           )),
       body: Stack(
-        children: <Widget>[
+        children:_gameOver?(<Widget>[Container(color:Colors.red,height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,child:Center(child: Text("Game Over",style: TextStyle(fontSize: 34,fontWeight: FontWeight.bold),)))]):( <Widget>[
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -116,12 +127,12 @@ class _DinoBusState extends State<DinoBus> {
             left: 0,
             right: 0,
             child: _showBus
-                ? Container(height: MediaQuery.of(context).size.height * 0.5,
-                width:  MediaQuery.of(context).size.width * 0.2 ,
+                ? Container(height: MediaQuery.of(context).size.height * 0.3,
+                
                     decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
                         image: DecorationImage(
-                          fit:BoxFit.cover,
+                          fit:BoxFit.fitHeight,
                             image: AssetImage("image/bus1.png"))))
                 : (Text('$_n',
                     style: TextStyle(
@@ -130,7 +141,7 @@ class _DinoBusState extends State<DinoBus> {
                         fontWeight: FontWeight.w300),
                     textAlign: TextAlign.center)),
           )
-        ],
+        ]),
       ),
     );
   }
