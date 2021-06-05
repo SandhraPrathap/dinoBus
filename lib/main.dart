@@ -2,10 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-int n = 0;
-void add() {
-  n++;
-}
+
 
 void main() {
   runApp(MaterialApp(home: DinoBus()));
@@ -20,9 +17,10 @@ class _DinoBusState extends State<DinoBus> {
   int _n = 0;
 
   void _add() {
-    setState(() {
-      n++;
-    });
+     {
+      _n++;
+      print('$_n');
+    };
   }
 
   @override
@@ -91,7 +89,7 @@ class _DinoBusState extends State<DinoBus> {
                       primary: Color.fromRGBO(249, 224, 5, 1),
                     ),
                     onPressed: () {
-                      add;
+                      _add();
                     },
                     child: Align(
                       alignment: Alignment.center,
@@ -108,7 +106,7 @@ class _DinoBusState extends State<DinoBus> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: Text('$n',
+            child: Text('$_n',
                 style: TextStyle(
                     fontSize: 200,
                     color: Colors.black,
