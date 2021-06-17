@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 void main() {
   runApp(MaterialApp(home: DinoBus()));
@@ -13,7 +14,7 @@ class DinoBus extends StatefulWidget {
 
 class _DinoBusState extends State<DinoBus> {
   int _n = 0;
-
+  final AudioCache _audio = AudioCache(prefix: 'image/');
   bool _showBus = false;
   bool _gameOver = false;
 
@@ -27,11 +28,9 @@ class _DinoBusState extends State<DinoBus> {
   }
 
   void _bus() {
-   _n++;
-
+    _n++;
     setState(() {
       _showBus = true;
-      
     });
 
     if (_n % 5 != 0) {
@@ -51,22 +50,33 @@ class _DinoBusState extends State<DinoBus> {
                       fontSize: 24,
                       color: Color.fromRGBO(249, 224, 5, 1),
                       fontWeight: FontWeight.bold)),
-              Image.asset("image/bus1.png")
+              Image.asset("image/bus1.png"),
             ],
           )),
       body: Stack(
         children: _gameOver
             ? (<Widget>[
-                Container(
-                    color: Colors.red,
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: Center(
-                        child: Text(
-                      "Game Over",
-                      style:
-                          TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
-                    )))
+                Container(height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.red,
+                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                     
+                           Center(
+                              child: Text(
+                            "Game Over ",
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
+                          )),
+                      IconButton(
+                        icon: Icon(Icons.restart_alt_rounded),
+                        color: Colors.black,
+                        onPressed: () {},
+                        iconSize: 34,
+                      ),
+                    ],
+                  ),
+                )
               ])
             : (<Widget>[
                 Container(
@@ -97,13 +107,12 @@ class _DinoBusState extends State<DinoBus> {
                         primary: Color.fromRGBO(249, 224, 5, 1),
                       ),
                       onPressed: () {
-                        _bus();
-                         Future.delayed(Duration(milliseconds:500), () {
+                        _audio.play("bushorn.mp3");
 
-                              if (_n % 5 == 0)
-                                _add();
-                              
-                            });
+                        _bus();
+                        Future.delayed(Duration(milliseconds: 1500), () {
+                          if (_n % 5 == 0) _add();
+                        });
                       },
                       child: Align(
                           alignment: Alignment.center,
@@ -127,12 +136,21 @@ class _DinoBusState extends State<DinoBus> {
                           ),
                           onPressed: () {
                             _add();
-                            Future.delayed(Duration(milliseconds:500), () {
-                              if((_n+1)%5==0)
-                              _bus();
-                              else if (_n % 5 != 0)
-                                {_add();}
-                              
+                            if ((_n + 1) % 50 == 0) {
+                              Future.delayed(Duration(milliseconds: 500), () {
+                                _audio.play("success.wav");
+                              });
+                            } else if ((_n + 1) % 5 == 0) {
+                              Future.delayed(Duration(milliseconds: 500), () {
+                                _audio.play("bushorn.mp3");
+                              });
+                            }
+                            Future.delayed(Duration(milliseconds: 500), () {
+                              if ((_n + 1) % 5 == 0)
+                                _bus();
+                              else if (_n % 5 != 0) {
+                                _add();
+                              }
                             });
                           },
                           child: Align(
