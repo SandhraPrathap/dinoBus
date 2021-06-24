@@ -71,7 +71,12 @@ class _DinoBusState extends State<DinoBus> {
                       IconButton(
                         icon: Icon(Icons.restart_alt_rounded),
                         color: Colors.black,
-                        onPressed: () {},
+                        onPressed: () {setState(() {
+                                _gameOver = false;
+
+                                _n =0;
+                                _showBus = false;
+                              });},
                         iconSize: 34,
                       ),
                     ],
